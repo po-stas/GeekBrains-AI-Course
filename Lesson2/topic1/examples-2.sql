@@ -1,18 +1,6 @@
 -- Урок 3. Введение в проектирование БД.
 
--- Варианты решения ДЗ.
--- Создание таблицы users
-CREATE TABLE IF NOT EXISTS users (
-  id SERIAL,
-  name VARCHAR(255) NOT NULL UNIQUE
-);
-
--- Выборка 100 записей
-mysqldump mysql help_keyword --where='TRUE LIMIT 100' > help_keyword_report.sql
-
--- Вариант Вячеслава Рожнова
-mysqldump mysql help_keyword --opt --where='TRUE ORDER BY help_keyword_id LIMIT 100' > help_keyword_report.sql
-
+-- Структура созданная во время вебинара:
 -- Сздаём БД vk
 CREATE DATABASE vk;
 
@@ -90,10 +78,5 @@ CREATE TABLE media_types (
   name VARCHAR(255) NOT NULL UNIQUE
 );
 
--- Рекомендуемый стиль
--- https://www.sqlstyle.guide/ru/
-
--- Заполняем таблицы с учётом отношений 
--- на http://filldb.info
 
 
