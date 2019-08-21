@@ -1,3 +1,5 @@
+USE vk;
+
 #
 # TABLE STRUCTURE FOR: communities
 #
