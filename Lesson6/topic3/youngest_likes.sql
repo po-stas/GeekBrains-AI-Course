@@ -29,7 +29,7 @@ SELECT COUNT(*) AS likes_count FROM likes WHERE item_id IN (SELECT user_id FROM 
 	SELECT user_id, TIMESTAMPDIFF(YEAR, birthday, NOW()) AS age 
 	FROM profiles
 	ORDER BY age
-	LIMIT 10) fake_table
+	LIMIT 10) dummy_table
 ) AND like_type_id = 2; -- Type of Like for user
 
 -- +-------------+
@@ -48,7 +48,7 @@ SELECT COUNT(*) AS likes_count FROM likes WHERE item_id IN (SELECT user_id FROM 
 	SELECT user_id, TIMESTAMPDIFF(YEAR, birthday, NOW()) AS age 
 	FROM profiles
 	ORDER BY age
-	LIMIT 10) fake_table
+	LIMIT 10) dummy_table
 ) AND (SELECT name FROM like_types WHERE id=like_type_id) LIKE 'users';
 
 -- +-------------+
