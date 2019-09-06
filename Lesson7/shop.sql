@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS products;
 CREATE TABLE products (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) COMMENT 'Название',
-  desription TEXT COMMENT 'Описание',
+  description TEXT COMMENT 'Описание',
   price DECIMAL (11,2) COMMENT 'Цена',
   catalog_id INT UNSIGNED,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -102,3 +102,35 @@ CREATE TABLE storehouses_products (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) COMMENT = 'Запасы на складе';
+
+
+-- Для задачки с расписанием рейсов
+
+DROP TABLE IF EXISTS flights;
+CREATE TABLE flights (
+  id SERIAL PRIMARY KEY,
+  flight_from VARCHAR(255),
+  flight_to VARCHAR(255)
+);
+
+DROP TABLE IF EXISTS cities;
+CREATE TABLE cities (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  label VARCHAR(255)
+);
+
+INSERT INTO flights (id, flight_from, flight_to) VALUES
+  (NULL, 'moscow', 'omsk'),
+  (NULL, 'novgorod', 'kazan'),
+  (NULL, 'irkutsk', 'moscow'),
+  (NULL, 'omsk', 'irkutsk'),
+  (NULL, 'moscow', 'kazan');
+
+INSERT INTO cities (id, name, label) VALUES
+  (NULL, 'moscow', 'Москва'),
+  (NULL, 'novgorod', 'Новгород'),
+  (NULL, 'irkutsk', 'Иркутск'),
+  (NULL, 'omsk', 'Омск'),
+  (NULL, 'kazan', 'Казань');
+
