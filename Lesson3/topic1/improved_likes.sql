@@ -22,7 +22,7 @@ CREATE TABLE likes (
 
 -- И таблицу типов лайков.
 
-CREATE TABLE likes_types (
+CREATE TABLE like_types (
 	id SERIAL,
 	name VARCHAR(255) NOT NULL UNIQUE
 );
