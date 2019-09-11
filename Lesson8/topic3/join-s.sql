@@ -1,8 +1,105 @@
 USE vk;
 
+-- Пусть задан некоторый пользователь. 
+-- Из всех друзей этого пользователя найдите человека, который больше всех общался с нашим пользоваетелем.
+-- Вариант на вложенных запросах:
+
+SELECT user, COUNT(*) AS messages FROM (
+	SELECT (SELECT CONCAT(firstname, ' ', lastname) FROM users WHERE id=from_user_id) AS user FROM messages 
+		WHERE from_user_id IN 
+			(SELECT user_id FROM friendship 
+				WHERE friend_id=1 
+				AND confirmed_at IS NOT NULL
+			UNION 
+			SELECT friend_id FROM friendship 
+				WHERE user_id=1
+				AND confirmed_at IS NOT NULL) 
+		AND to_user_id=1
+	UNION ALL
+	SELECT (SELECT CONCAT(firstname, ' ', lastname) FROM users WHERE id=to_user_id) AS user FROM messages 
+		WHERE to_user_id IN 
+			(SELECT user_id FROM friendship 
+				WHERE friend_id=1
+				AND confirmed_at IS NOT NULL
+			UNION 
+			SELECT friend_id FROM friendship 
+				WHERE user_id=1
+				AND confirmed_at IS NOT NULL
+			)
+		AND from_user_id=1
+) dummy_table
+GROUP BY user
+ORDER BY messages DESC
+LIMIT 1;
+
+-- user        |messages|
+-- ------------|--------|
+-- Dedric Mayer|       4|
 
 
--- Количество лайков 10 самым молодым пользователям
+-- Вариант на JOIN:
+-- Начал с самого начала - друзья в обе стороны:
+
+SELECT CONCAT(u.firstname, ' ', u.lastname) as friend FROM
+		users AS u
+	INNER JOIN
+		friendship AS f
+			ON u.id = f.friend_id AND f.user_id = 1 
+			OR u.id = f.user_id AND f.friend_id = 1;
+		
+-- friend              |
+-- --------------------|
+-- Merle Berge         |
+-- Dedric Mayer        |
+-- Dominique Morissette|
+
+		
+-- Теперь сообщения в обе стороны от этих друзей:
+		
+SELECT CONCAT(u.firstname, ' ', u.lastname) as friend FROM
+		users AS u
+	INNER JOIN
+		friendship AS f
+			ON u.id = f.friend_id AND f.user_id = 1 
+			OR u.id = f.user_id AND f.friend_id = 1
+	INNER JOIN
+		messages AS m
+			ON u.id = m.from_user_id AND m.to_user_id = 1 
+			OR u.id = m.to_user_id AND m.from_user_id = 1;
+		
+-- friend              |
+-- --------------------|
+-- Dedric Mayer        |
+-- Dedric Mayer        |
+-- Dedric Mayer        |
+-- Dedric Mayer        |
+-- Dominique Morissette|
+		
+-- Ну и аггрегация, сортировка и лимит:
+
+SELECT CONCAT(u.firstname, ' ', u.lastname) as friend, COUNT(*) as messages FROM
+		users AS u
+	INNER JOIN
+		friendship AS f
+			ON u.id = f.friend_id AND f.user_id = 1 
+			OR u.id = f.user_id AND f.friend_id = 1
+	INNER JOIN
+		messages AS m
+			ON u.id = m.from_user_id AND m.to_user_id = 1 
+			OR u.id = m.to_user_id AND m.from_user_id = 1
+GROUP BY friend
+ORDER BY messages DESC
+LIMIT 1;
+
+-- friend      |messages|
+-- ------------|--------|
+-- Dedric Mayer|       4|
+
+-- Вроде всё. Заметно чище и проще запрос получился.
+
+
+
+-- 2. Количество лайков 10 самым молодым пользователям
 -- Предыдущий вариант:
 
 SELECT COUNT(*) AS likes_count FROM likes WHERE item_id IN (SELECT user_id FROM (
@@ -80,7 +177,7 @@ SELECT SUM(count) as overall FROM (
 
 
 
--- Кто больше поставил лайков, мужчины или женщины
+-- 3. Кто больше поставил лайков, мужчины или женщины
 -- Предыдущий вариант:
 
 SELECT CASE(sex)
@@ -117,7 +214,7 @@ SELECT CASE(p.sex)
 
 
 
--- 10 наименее активных пользователей
+-- 4. 10 наименее активных пользователей
 -- Предыдущий вариант (по количеству постов, лайков, сообщений):
 
 SELECT CONCAT(firstname, ' ', lastname) AS user, 
