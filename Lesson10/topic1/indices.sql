@@ -5,12 +5,9 @@
 -- больше к мобильным мессенджерам может иметь отношение, где телефон
 -- является обязательным полем.
 
-USE vk;
-
 CREATE UNIQUE INDEX users_email_uq ON users(email);
 CREATE INDEX user_fullname_idx ON users(lastname, firstname);
 
-SHOW CREATE TABLE communities_users;
 
 -- Профили. Тут насколько я понимаю по user_id индексы у нас и так уже есть, 
 -- поскольку он у нас PRIMARY KEY.
