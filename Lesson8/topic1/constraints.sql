@@ -70,6 +70,9 @@ ALTER TABLE media
 	ADD CONSTRAINT media_type_id_fk
 		FOREIGN KEY (media_type_id) REFERENCES media_types(id);
 	
+USE vk;
+SHOW CREATE TABLE users;
+	
 		
 -- Communities
 -- Запись комьюнити-юзер удаляется в любом случае, если юзер удален и если комьюнити удалено

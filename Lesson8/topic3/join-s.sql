@@ -113,7 +113,7 @@ SELECT COUNT(*) AS likes_count FROM likes WHERE item_id IN (SELECT user_id FROM 
 -- В предыдущем варианте решения лайки считались только для самого пользователя
 -- Исправим это. Выводим лайки для 10 самых молодых пользователей, 
 -- а также лайки для их медиа и сообщений.
-
+USE vk;
 SELECT 	
 		CONCAT(u.firstname, ' ', u.lastname) as user, 
 		count(l.id) as count, 
@@ -149,27 +149,25 @@ SELECT
 
 
 -- Просуммируем
+-- Исправленная версия
 
 SELECT SUM(count) as overall FROM (
 	SELECT 	
-		CONCAT(u.firstname, ' ', u.lastname) as user, 
-		count(l.id) as count, 
-		TIMESTAMPDIFF(YEAR, p.birthday, NOW()) AS age
-			FROM users AS u
-		INNER JOIN profiles AS p
-			ON p.user_id = u.id
+		count(DISTINCT l.id) as count 
+			FROM profiles AS p
 		LEFT JOIN media as m
-			ON m.user_id = u.id
+			ON m.user_id = p.user_id
 		LEFT JOIN messages as t
-			ON t.from_user_id = u.id
+			ON t.from_user_id = p.user_id
 		LEFT JOIN
 			likes AS l
-				ON l.item_id = u.id AND l.like_type_id = 2
-				OR l.item_id = m.id AND l.like_type_id = 1
-				OR l.item_id = t.id AND l.like_type_id = 3
-		GROUP BY u.id
+				ON l.item_id = p.user_id AND l.like_type_id = 2 -- лайки для самих пользователей
+				OR l.item_id = m.id AND l.like_type_id = 1 -- лайки для их медиа
+				OR l.item_id = t.id AND l.like_type_id = 3 -- лайки для их сообщений
+		GROUP BY p.user_id
 		ORDER BY p.birthday DESC
-	LIMIT 10) AS likes;
+	LIMIT 10) as likes;
+
 
 -- overall|
 -- -------|
@@ -224,7 +222,7 @@ SELECT CONCAT(firstname, ' ', lastname) AS user,
 	AS overall_activity 
 	FROM users
 	ORDER BY overall_activity
-	LIMIT 10;
+	LIMIT 40;
 
 -- user           |overall_activity|
 -- ---------------|----------------|
@@ -241,9 +239,10 @@ SELECT CONCAT(firstname, ' ', lastname) AS user,
 
 
 -- Вариант на JOIN:
+-- Исправленная версия
 
 SELECT CONCAT(u.firstname, ' ', u.lastname) AS user, 
-	COUNT(l.id) + COUNT(m.id) + COUNT(t.id) AS overall_activity
+	COUNT(DISTINCT l.id) + COUNT(DISTINCT m.id) + COUNT(DISTINCT t.id) AS overall_activity
 		FROM users AS u
 	LEFT JOIN
 		likes AS l
@@ -258,21 +257,22 @@ SELECT CONCAT(u.firstname, ' ', u.lastname) AS user,
 	ORDER BY overall_activity
 	LIMIT 10;
 
--- user               |overall_activity|
--- -------------------|----------------|
--- Joseph Gleason     |               0|
--- Theresa Ryan       |               0|
--- Waylon Grady       |               0|
--- Carroll Blick      |               0|
--- Lupe Nolan         |               1|
--- Morgan Pfannerstill|               1|
--- Margarita Doyle    |               1|
--- Patricia Wyman     |               1|
--- Shayne Kuhlman     |               1|
--- Orlo Cassin        |               1|
+-- user            |overall_activity|
+-- ----------------|----------------|
+-- Waylon Grady    |               0|
+-- Carroll Blick   |               0|
+-- Joseph Gleason  |               0|
+-- Theresa Ryan    |               0|
+-- Meggie Price    |               1|
+-- Keyshawn Roob   |               1|
+-- Felipe Dickens  |               1|
+-- Russel Daugherty|               1|
+-- Gianni Fritsch  |               1|
+-- Pablo Vandervort|               1|
 
 -- Выборка получилась слегка отличающаяся, просто тех, у кого 1 публикация довольно много
 -- Из них не выбрать наименее активных уже )
+
 
 -- Другой критерий - насколько давно пользователь постил что-либо последний раз, лайкал или общался с кем-либо.
 -- Вариант с вложенными запросами:
