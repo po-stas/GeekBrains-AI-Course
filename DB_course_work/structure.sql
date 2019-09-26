@@ -268,7 +268,11 @@ CREATE TABLE images (
   created_at DATETIME DEFAULT NOW(),
   updated_at DATETIME DEFAULT NOW() ON UPDATE NOW(),
   created_by INT UNSIGNED NOT NULL,					
-  updated_by INT UNSIGNED NOT NULL													
+  updated_by INT UNSIGNED NOT NULL,
+  size1 INT UNSIGNED NOT NULL,
+  size2 INT UNSIGNED NOT NULL,
+  size3 INT UNSIGNED NOT NULL,
+  size4 INT UNSIGNED NOT NULL
 ) COMMENT="Фотографии скал";
 
 DROP TABLE IF EXISTS image_types;
