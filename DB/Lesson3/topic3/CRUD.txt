@@ -1,0 +1,146 @@
+mysql> SHOW TABLES;
++-------------------+
+| Tables_in_vk      |
++-------------------+
+| communities       |
+| communities_users |
+| friendship        |
+| like_types        |
+| likes             |
+| media             |
+| media_types       |
+| messages          |
+| profiles          |
+| users             |
++-------------------+
+10 rows in set (0.00 sec)
+mysql> SELECT * FROM media_types;
++----+--------------------------------------------------------+
+| id | name                                                   |
++----+--------------------------------------------------------+
+|  2 | application/vnd.fdf                                    |
+|  3 | application/vnd.ms-powerpoint.template.macroenabled.12 |
+|  5 | application/vnd.rn-realmedia                           |
+|  4 | application/vnd.umajin                                 |
+|  1 | application/x-blorb                                    |
++----+--------------------------------------------------------+
+5 rows in set (0.00 sec)
+mysql> DELETE FROM media_types;
+Query OK, 5 rows affected (0.05 sec)
+mysql> SELECT * FROM media_types;
+Empty set (0.00 sec)
+mysql> INSERT INTO media_types VALUES (1, 'image')
+    -> ;
+Query OK, 1 row affected (0.08 sec)
+mysql> SELECT * FROM media_types;
++----+-------+
+| id | name  |
++----+-------+
+|  1 | image |
++----+-------+
+1 row in set (0.00 sec)
+mysql> INSERT INTO media_types VALUES (2, 'message'), (3, 'user');
+Query OK, 2 rows affected (0.08 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+mysql> SELECT * FROM media_types;
++----+---------+
+| id | name    |
++----+---------+
+|  1 | image   |
+|  2 | message |
+|  3 | user    |
++----+---------+
+3 rows in set (0.00 sec)
+mysql> INSERT INTO media_types VALUES (4, 'image')
+    -> ;
+ERROR 1062 (23000): Duplicate entry 'image' for key 'name'
+mysql> INSERT IGNORE INTO media_types VALUES (4, 'image');
+Query OK, 0 rows affected, 1 warning (0.04 sec)
+mysql> SHOW WARNINGS;
++---------+------+----------------------------------------+
+| Level   | Code | Message                                |
++---------+------+----------------------------------------+
+| Warning | 1062 | Duplicate entry 'image' for key 'name' |
++---------+------+----------------------------------------+
+1 row in set (0.00 sec)
+mysql> INSERT INTO media_types SET name = 'test';
+Query OK, 1 row affected (0.02 sec)
+
+mysql> SELECT * FROM media_types;
++----+---------+
+| id | name    |
++----+---------+
+|  1 | image   |
+|  2 | message |
+|  6 | test    |
+|  3 | user    |
++----+---------+
+4 rows in set (0.00 sec)
+mysql> REPLACE INTO media_types SET name = 'test';
+Query OK, 2 rows affected (0.01 sec)
+mysql> SELECT * FROM media_types;
++----+---------+
+| id | name    |
++----+---------+
+|  1 | image   |
+|  2 | message |
+|  7 | test    |
+|  3 | user    |
++----+---------+
+4 rows in set (0.00 sec)
+mysql> SELECT DISTINCT * FROM media_types;
++----+---------+
+| id | name    |
++----+---------+
+|  1 | image   |
+|  2 | message |
+|  7 | test    |
+|  3 | user    |
++----+---------+
+4 rows in set (0.00 sec)
+mysql> SELECT * FROM media_types LIMIT 2;
++----+---------+
+| id | name    |
++----+---------+
+|  1 | image   |
+|  2 | message |
++----+---------+
+2 rows in set (0.00 sec)
+mysql> SELECT * FROM media_types WHERE name = 'image';
++----+-------+
+| id | name  |
++----+-------+
+|  1 | image |
++----+-------+
+1 row in set (0.00 sec)
+mysql> UPDATE media_types SET name = 'group' WHERE name = 'message';
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+mysql> SELECT * FROM media_types;
++----+-------+
+| id | name  |
++----+-------+
+|  2 | group |
+|  1 | image |
+|  7 | test  |
+|  3 | user  |
++----+-------+
+4 rows in set (0.00 sec)
+mysql> UPDATE IGNORE media_types SET name = 'group' WHERE name = 'message';
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+mysql> UPDATE IGNORE media_types SET name = 'message' WHERE name = 'group';
+Query OK, 1 row affected (0.06 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+mysql> DELETE FROM media_types WHERE name = 'test';
+Query OK, 1 row affected (0.11 sec)
+mysql> SELECT * FROM media_types;
++----+---------+
+| id | name    |
++----+---------+
+|  1 | image   |
+|  2 | message |
+|  3 | user    |
++----+---------+
+3 rows in set (0.00 sec)
+mysql> 
